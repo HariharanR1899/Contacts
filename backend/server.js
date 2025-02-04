@@ -1,9 +1,10 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const { Pool } = require("pg");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import pkg from "pg";
 
 dotenv.config();
+const { Pool } = pkg;
 
 const app = express();
 const pool = new Pool({
@@ -14,22 +15,8 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 pool.connect()
-.then(async (client) => {
-  console.log("✅ Connected to PostgreSQL");
-
-  // ✅ Create table if it does not exist
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS contacts (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      address TEXT,
-      phone VARCHAR(20) NOT NULL
-    );
-  `);
-
-  console.log("✅ Contacts table is ready");
-})
-  .catch((err) => console.error("Database connection error:", err.message));
+  .then(() => console.log("✅ Connected to PostgreSQL database"))
+  .catch((err) => console.error("❌ Database connection error:", err.message));
 app.use(cors());
 app.use(express.json());
 console.log("Connecting to database:", process.env.DB_NAME);
